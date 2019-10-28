@@ -1,5 +1,3 @@
-#include "Model.h"
-
 // Assimp includes
 #include <assimp/cimport.h> // scene importer
 #include <assimp/scene.h> // collects data
@@ -9,6 +7,8 @@
 #include <iostream>
 #include <map>
 #include <vector> 
+
+#include "model.h"
 
 #pragma region MESH LOADING
 /*----------------------------------------------------------------------------
@@ -23,11 +23,11 @@ ModelData load_mesh(const char* file_name) {
 	/* relevant if there are multiple meshes in the model file that   */
 	/* are offset from the origin. This is pre-transform them so      */
 	/* they're in the right position.                                 */
-	const aiScene* scene = aiImportFile(
+	modelData.scene = aiImportFile(
 		file_name,
 		aiProcess_Triangulate | aiProcess_PreTransformVertices
 	);
-
+	const aiScene* scene = modelData.scene;
 	if (!scene) {
 		fprintf(stderr, "ERROR: reading mesh %s\n", file_name);
 		return modelData;
@@ -64,7 +64,8 @@ ModelData load_mesh(const char* file_name) {
 	}
 
 	// TODO: handle rigging
-	aiReleaseImport(scene);
+	// aiReleaseImport(scene);
+	modelData.scene = scene;
 	return modelData;
 }
 #pragma endregion MESH LOADING
@@ -185,16 +186,16 @@ void generateObjectBufferMesh(Model *model) {
 
 	// mesh_data = load_mesh(MESH_NAME);
 	ModelData mesh_data = model->mesh;
-	unsigned int vp_vbo = 0;
-
+	
 	GLuint shaderProgramID = model->shaderProgramID;
 	GLuint loc1 = glGetAttribLocation(shaderProgramID, "vertex_position");
 	GLuint loc2 = glGetAttribLocation(shaderProgramID, "vertex_normal");
 	GLuint loc3 = glGetAttribLocation(shaderProgramID, "vertex_texture");
 
 	// loc for skeletons
-	GLuint loc4, loc5;
+	// GLuint loc4, loc5;
 
+	unsigned int vp_vbo = 0;
 	glGenBuffers(1, &vp_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vp_vbo);
 	glBufferData(GL_ARRAY_BUFFER, mesh_data.mPointCount * sizeof(vec3), &mesh_data.mVertices[0], GL_STATIC_DRAW);
@@ -223,5 +224,7 @@ void generateObjectBufferMesh(Model *model) {
 	glEnableVertexAttribArray(loc3);
 	glBindBuffer(GL_ARRAY_BUFFER, vt_vbo);
 	glVertexAttribPointer(loc3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	model->mesh_vao = vao;
 }
 #pragma endregion VBO_FUNCTIONS

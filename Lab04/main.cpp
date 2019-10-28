@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <mmsystem.h>
 #include <iostream>
+#include <limits.h>
 #include <string>
 #include <stdio.h>
 #include <math.h>
@@ -17,7 +18,7 @@
 
 // Project includes
 #include "maths_funcs.h"
-#include "Model.h"
+#include "model.h"
 
 /*----------------------------------------------------------------------------
 MESH TO LOAD
@@ -28,22 +29,23 @@ MESH TO LOAD
 #define WELL_MESH_NAME "3d_Models/well/well3.dae"
 #define HILLY_MAP_MESH_NAME "3d_Models/hilly/hilly.dae"
 
-
 /*----------------------------------------------------------------------------
 INITIALIZE VARIABLES 
 ----------------------------------------------------------------------------*/
 int width = 800;
 int height = 600;
 
-Model absol, well, terrain; 
+Model absol;
+Model well;
+Model terrain; 
 
 float deltaTime; 
 DWORD startTime;
 DWORD duration = 0;
 
 // mouse 
-int mouse_x, mouse_y = -100;
-int mouse_dx, mouse_dy = -100; 
+int mouse_x = 0, mouse_y = 0;
+int mouse_dx = -100, mouse_dy = -100;
 
 // setup variables for model
 GLfloat modelTranslationSpeed[] = { 10.0f, 10.0f, 10.0f };
@@ -89,15 +91,17 @@ mat4 setupCamera(Model pivot) {
 	view = rotate(view, cameraOrbitRotation);
 	view = translate(view, vec3(cameraPosition[0], cameraPosition[1], cameraPosition[2]));
 	view = rotate(view, cameraRotation);
-	view = translate(view, vec3(pivot.position[0], pivot.position[1], pivot.position[2]));
+	view = translate(view, vec3(pivot.position[0], -pivot.position[1], pivot.position[2]));
 
 	return view;
 }
 
 //Setup perspective projection
 mat4 setupProjection() {
-	return perspective(75.0f, (float)width / (float)height, 0.1f, 1000.0f);
+	mat4 persp_proj = perspective(75.0f, (float)width / (float)height, 0.1f, 1000.0f);
+	return persp_proj;
 }
+
 /*----------------------------------------------------------------------------
 RENDERING
 ----------------------------------------------------------------------------*/
@@ -141,10 +145,24 @@ void display() {
 	mat4 projection = setupProjection();
     
 	mat4 model = render(absol, view, projection);
-	render(well, view, projection);
-	render(terrain, view, projection);
+	mat4 wellModel = render(well, view, projection);
+	mat4 terrainModel = render(terrain, view, projection);
 
 	glutSwapBuffers();
+}
+
+void updateScene() {
+	//Update Delta time
+	static DWORD last_time = 0;
+	DWORD curr_time = timeGetTime();
+	if (last_time == 0)
+		last_time = curr_time;
+	deltaTime = (curr_time - last_time) * 0.001f;
+	last_time = curr_time;
+
+	duration = (timeGetTime() - startTime) / 1000.0f;
+
+	glutPostRedisplay();
 }
 
 void init() {
@@ -165,8 +183,8 @@ void init() {
 	startTime = timeGetTime();
 
 	absol.position[1] -= 5;
-	absol.scaling[0] *= 0.03, absol.scaling[1] *= 0.03, absol.scaling[2] *= 0.03;
-	absol.rotation[0] += 90;
+	absol.scaling[0] *= 1, absol.scaling[1] *= 1, absol.scaling[2] *= 1;
+	//absol.rotation[0] += 90;
 
 	terrain.scaling[0] *= 1, terrain.scaling[1] *= 1, terrain.scaling[2] *= 1;
 	terrain.position[1] -= 10;
@@ -179,20 +197,6 @@ void init() {
 	cameraRotation[1] += 180.f;
 } 
 
-void updateScene() {
-	//Update Delta time
-	static DWORD last_time = 0;
-	DWORD curr_time = timeGetTime();
-	if (last_time == 0)
-		last_time = curr_time;
-	deltaTime = (curr_time - last_time) * 0.001f;
-	last_time = curr_time;
-
-	duration = (timeGetTime() - startTime) / 1000.0f;
-
-	glutPostRedisplay();
-} 
-
 /*----------------------------------------------------------------------------
 USER INTERACTION FUNCTIONS
 ----------------------------------------------------------------------------*/
@@ -200,10 +204,10 @@ USER INTERACTION FUNCTIONS
 void keypress(unsigned char key, int x, int y) {
 	if (key = 'a') absol.position[0] += modelTranslationSpeed[0] * deltaTime;
 	if (key = 'd') absol.position[0] -= modelTranslationSpeed[0] * deltaTime;
-	if (key = 's') absol.position[2] += modelTranslationSpeed[2] * deltaTime;
-	if (key = 'w') absol.position[2] -= modelTranslationSpeed[2] * deltaTime;
+	if (key = 'w') absol.position[2] += modelTranslationSpeed[2] * deltaTime;
+	if (key = 's') absol.position[2] -= modelTranslationSpeed[2] * deltaTime;
 	if (key = 'x') orbit = !orbit;
-	
+
 	// Draw the next frame
 	glutPostRedisplay();
 }
@@ -218,10 +222,10 @@ void specialKeyboard(int key, int x, int y) {
 		cameraPosition[0] += cameraTranslationSpeed[0] * deltaTime;
 		break;
 	case GLUT_KEY_UP:
-		cameraPosition[2] += cameraTranslationSpeed[2] * deltaTime;
+		cameraPosition[2] -= cameraTranslationSpeed[2] * deltaTime;
 		break;
 	case GLUT_KEY_DOWN:
-		cameraPosition[2] -= cameraTranslationSpeed[2] * deltaTime;
+		cameraPosition[2] += cameraTranslationSpeed[2] * deltaTime;
 		break;
 	default:
 		break;

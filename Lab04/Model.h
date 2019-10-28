@@ -40,4 +40,4 @@ static void AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum Shad
 GLuint CompileShaders(const char* vertexShaderTextFileName, const char* fragmentShaderTextFileName);
 void generateObjectBufferMesh(Model *model);
 
-// TODO: handle rigging and texturing 
+// TODO: handle rigging and texturing #pragma once

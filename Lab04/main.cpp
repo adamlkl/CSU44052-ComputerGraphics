@@ -126,7 +126,6 @@ mat4 render(Model model, mat4 view, mat4 projection) {
 	glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
 	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, transformation.m);
 	glDrawArrays(GL_TRIANGLES, 0, mesh_data.mPointCount);
-
 	return transformation;
 }
 /*----------------------------------------------------------------------------
@@ -182,15 +181,14 @@ void init() {
 
 	startTime = timeGetTime();
 
-	absol.position[1] -= 5;
-	absol.scaling[0] *= 1, absol.scaling[1] *= 1, absol.scaling[2] *= 1;
-	//absol.rotation[0] += 90;
+	absol.position[2] -= 20; absol.position[1] -= 2;
+	absol.scaling[0] *= 0.03, absol.scaling[1] *= 0.03, absol.scaling[2] *= 0.03;
 
-	terrain.scaling[0] *= 1, terrain.scaling[1] *= 1, terrain.scaling[2] *= 1;
+	terrain.scaling[0] *= 2, terrain.scaling[1] *= 1.5, terrain.scaling[2] *= 2;
 	terrain.position[1] -= 10;
 
-	well.scaling[0] *= 1, well.scaling[1] *= 1, well.scaling[2] *= 1;
-	well.position[0] = 10, well.position[1] -= 5, well.position[2] = 10;
+	well.scaling[0] *= 0.5, well.scaling[1] *= 0.5, well.scaling[2] *= 0.5;
+	well.position[0] -= 10, well.position[1] -= 9, well.position[2] = 10;
 
 	cameraPosition[1] -= 5.0f;
 	cameraPosition[2] += 20.0f;
@@ -217,6 +215,8 @@ void specialKeyboard(int key, int x, int y) {
 	{
 	case GLUT_KEY_LEFT:
 		cameraPosition[0] -= cameraTranslationSpeed[0] * deltaTime;
+		// cameraRotation[1] += cameraRotationSpeed[1] * deltaTime;
+		// cameraRotation[1] = fmodf(cameraRotation[1], 360.0f);
 		break;
 	case GLUT_KEY_RIGHT:
 		cameraPosition[0] += cameraTranslationSpeed[0] * deltaTime;
@@ -247,7 +247,7 @@ void mouseMotion(int x, int y) {
 	else last_camera_rotation = cameraRotation;
 
 	last_camera_rotation[1] -= mouse_dx * cameraRotationSpeed[1] * deltaTime;
-	last_camera_rotation[0] -= mouse_dy * cameraRotationSpeed[0] * deltaTime;
+	// last_camera_rotation[0] -= mouse_dy * cameraRotationSpeed[0] * deltaTime;
 
 	// Draw the next frame
 	glutPostRedisplay();

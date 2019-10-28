@@ -210,7 +210,8 @@ void generateObjectBufferMesh(Model *model) {
 	glBindBuffer(GL_ARRAY_BUFFER, vt_vbo);
 	glBufferData(GL_ARRAY_BUFFER, mesh_data.mPointCount * sizeof(vec2), &mesh_data.mTextureCoords[0], GL_STATIC_DRAW);
 
-	unsigned int vao = 0;
+	GLuint vao = model->mesh_vao;
+	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
 	glEnableVertexAttribArray(loc1);

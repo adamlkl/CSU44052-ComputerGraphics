@@ -1,2 +1,4 @@
 ﻿  main.cpp
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\main.cpp(167): warning C4305: '*=': truncation from 'double' to 'GLfloat'
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\main.cpp(190): warning C4244: '=': conversion from 'float' to 'DWORD', possible loss of data
   Lab04.vcxproj -> C:\Users\ASUS\source\repos\ComputerGraphics\Lab 04 - Sample Object Hierarchy\\build\executables\Debug\Lab 04.exe

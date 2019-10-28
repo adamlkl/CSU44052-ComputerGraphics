@@ -46,7 +46,9 @@ int mouse_x, mouse_y = -100;
 int mouse_dx, mouse_dy = -100; 
 
 // setup variables for model
-GLfloat modelTranslationSpeed[], modelRotationSpeed[], modelScalingSpeed[] = { 10.0f, 10.0f, 10.0f };
+GLfloat modelTranslationSpeed[] = { 10.0f, 10.0f, 10.0f };
+GLfloat modelRotationSpeed[] = { 10.0f, 10.0f, 10.0f };
+GLfloat modelScalingSpeed[] = { 10.0f, 10.0f, 10.0f };
 
 // setup variables for camera
 GLfloat cameraPosition[] = { 0.0f, 0.0f, -10.0f }, cameraRotation[] = { 0.0f, 0.0f, 0.0f }, cameraOrbitRotation[] = { 0.0f, 0.0f, 0.0f };
@@ -64,7 +66,7 @@ mat4 rotate(mat4 modelMatrix, GLfloat rotation[]) {
 	return tempMatrix;
 }
 
-mat4 transformation(Model model) {
+mat4 applyTransformation(Model model) {
 	mat4 transformation = identity_mat4();
 	transformation = scale(transformation, vec3(model.scaling[0], model.scaling[1], model.scaling[2]));
 	transformation = rotate(transformation, model.rotation);
@@ -80,8 +82,49 @@ void copy_array(GLfloat matA[3], GLfloat matB[3]) {
 /*----------------------------------------------------------------------------
 MODEL, VIEW, PROJECTION CALCULATION
 ----------------------------------------------------------------------------*/
+mat4 setupCamera(Model pivot) {
+	mat4 pivotTransformation = applyTransformation(pivot);
 
+	mat4 view = identity_mat4();
+	view = rotate(view, cameraOrbitRotation);
+	view = translate(view, vec3(cameraPosition[0], cameraPosition[1], cameraPosition[2]));
+	view = rotate(view, cameraRotation);
+	view = translate(view, vec3(pivot.position[0], pivot.position[1], pivot.position[2]));
 
+	return view;
+}
+
+//Setup perspective projection
+mat4 setupProjection() {
+	return perspective(75.0f, (float)width / (float)height, 0.1f, 1000.0f);
+}
+/*----------------------------------------------------------------------------
+RENDERING
+----------------------------------------------------------------------------*/
+mat4 render(Model model, mat4 view, mat4 projection) {
+	ModelData mesh_data = model.mesh;
+	GLuint shaderProgramID = model.shaderProgramID;
+	glUseProgram(shaderProgramID);
+	glBindVertexArray(model.mesh_vao);
+
+	//Declare your uniform variables that will be used in your shader
+	int matrix_location = glGetUniformLocation(shaderProgramID, "model");
+	int view_mat_location = glGetUniformLocation(shaderProgramID, "view");
+	int proj_mat_location = glGetUniformLocation(shaderProgramID, "proj");
+
+	mat4 transformation = identity_mat4();
+	transformation = scale(transformation, vec3(model.scaling[0], model.scaling[1], model.scaling[2]));
+	transformation = rotate(transformation, model.rotation);
+	transformation = translate(transformation, vec3(model.position[0], model.position[1], model.position[2]));
+
+	// update uniforms & draw
+	glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, projection.m);
+	glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
+	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, transformation.m);
+	glDrawArrays(GL_TRIANGLES, 0, mesh_data.mPointCount);
+
+	return transformation;
+}
 /*----------------------------------------------------------------------------
 GAME OPERATION 
 ----------------------------------------------------------------------------*/
@@ -94,6 +137,13 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// mvp setup and rendering
+	mat4 view = setupCamera(absol);
+	mat4 projection = setupProjection();
+    
+	mat4 model = render(absol, view, projection);
+	render(well, view, projection);
+	render(terrain, view, projection);
+
 	glutSwapBuffers();
 }
 
@@ -115,13 +165,13 @@ void init() {
 	startTime = timeGetTime();
 
 	absol.position[1] -= 5;
-	absol.scaling[0], absol.scaling[1], absol.scaling[2] *= 0.03; 
+	absol.scaling[0] *= 0.03, absol.scaling[1] *= 0.03, absol.scaling[2] *= 0.03;
 	absol.rotation[0] += 90;
 
-	terrain.scaling[0], terrain.scaling[1], terrain.scaling[2] *= 1;
+	terrain.scaling[0] *= 1, terrain.scaling[1] *= 1, terrain.scaling[2] *= 1;
 	terrain.position[1] -= 10;
 
-	well.scaling[0], well.scaling[1], well.scaling[2] *= 1;
+	well.scaling[0] *= 1, well.scaling[1] *= 1, well.scaling[2] *= 1;
 	well.position[0] = 10, well.position[1] -= 5, well.position[2] = 10;
 
 	cameraPosition[1] -= 5.0f;
@@ -143,19 +193,22 @@ void updateScene() {
 	glutPostRedisplay();
 } 
 
+/*----------------------------------------------------------------------------
+USER INTERACTION FUNCTIONS
+----------------------------------------------------------------------------*/
 #pragma region USER_INPUT_FUNCTIONS
 void keypress(unsigned char key, int x, int y) {
 	if (key = 'a') absol.position[0] += modelTranslationSpeed[0] * deltaTime;
 	if (key = 'd') absol.position[0] -= modelTranslationSpeed[0] * deltaTime;
 	if (key = 's') absol.position[2] += modelTranslationSpeed[2] * deltaTime;
-	if (key = 'w') absol.position[2] += modelTranslationSpeed[2] * deltaTime;
+	if (key = 'w') absol.position[2] -= modelTranslationSpeed[2] * deltaTime;
 	if (key = 'x') orbit = !orbit;
 	
 	// Draw the next frame
 	glutPostRedisplay();
 }
 
-void specialKeyboard(unsigned char key, int x, int y) {
+void specialKeyboard(int key, int x, int y) {
 	switch (key)
 	{
 	case GLUT_KEY_LEFT:
@@ -168,21 +221,47 @@ void specialKeyboard(unsigned char key, int x, int y) {
 		cameraPosition[2] += cameraTranslationSpeed[2] * deltaTime;
 		break;
 	case GLUT_KEY_DOWN:
-		cameraPosition[2] += cameraTranslationSpeed[2] * deltaTime;
+		cameraPosition[2] -= cameraTranslationSpeed[2] * deltaTime;
 		break;
 	default:
 		break;
 	}
-
 	// Draw the next frame
 	glutPostRedisplay();
 }
 
 void mouseMotion(int x, int y) {
+	if (mouse_x != -100) mouse_dx = mouse_x - x;
+    if (mouse_y != -100) mouse_dy = mouse_y - y;
 
+	mouse_x = x;
+	mouse_y = y;
+
+	GLfloat* last_camera_rotation;
+
+	if (orbit) last_camera_rotation = cameraOrbitRotation;
+	else last_camera_rotation = cameraRotation;
+
+	last_camera_rotation[1] -= mouse_dx * cameraRotationSpeed[1] * deltaTime;
+	last_camera_rotation[0] -= mouse_dy * cameraRotationSpeed[0] * deltaTime;
+
+	// Draw the next frame
+	glutPostRedisplay();
 }
 
-void mouse 
+void mouseButton(int button, int state, int x, int y) {
+	if (button == GLUT_LEFT_BUTTON) {
+		if (state == GLUT_DOWN) {
+			mouse_x = x;
+			mouse_y = y;
+		}
+		else {
+			mouse_x = -100;
+			mouse_y = -100;
+		}
+	}
+}
+//mouseScroll
 #pragma endregion KEYBOARD_INPUT_FUNCTIONS
 
 int main(int argc, char** argv) {
@@ -196,6 +275,9 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(display);
 	glutIdleFunc(updateScene);
 	glutKeyboardFunc(keypress);
+	glutSpecialFunc(specialKeyboard);
+	glutMotionFunc(mouseMotion);
+	glutMouseFunc(mouseButton);
 
 	// A call to glewInit() must be done after glut is initialized!
 	GLenum res = glewInit();

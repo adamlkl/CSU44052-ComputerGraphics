@@ -200,11 +200,23 @@ USER INTERACTION FUNCTIONS
 ----------------------------------------------------------------------------*/
 #pragma region USER_INPUT_FUNCTIONS
 void keypress(unsigned char key, int x, int y) {
-	if (key = 'a') absol.position[0] += modelTranslationSpeed[0] * deltaTime;
-	if (key = 'd') absol.position[0] -= modelTranslationSpeed[0] * deltaTime;
-	if (key = 'w') absol.position[2] += modelTranslationSpeed[2] * deltaTime;
-	if (key = 's') absol.position[2] -= modelTranslationSpeed[2] * deltaTime;
-	if (key = 'x') orbit = !orbit;
+	if (key == 'a') {
+		absol.position[0] += modelTranslationSpeed[0] * deltaTime;
+		absol.rotation[1] = 90;
+	}
+	if (key == 'd') {
+		absol.position[0] -= modelTranslationSpeed[0] * deltaTime;
+		absol.rotation[1] = -90;
+	}
+	if (key == 'w') {
+		absol.position[2] += modelTranslationSpeed[2] * deltaTime;
+		absol.rotation[1] = 0;
+	}
+	if (key == 's') {
+		absol.position[2] -= modelTranslationSpeed[2] * deltaTime;
+		absol.rotation[1] = 180;
+	}
+	if (key == 'x') orbit = !orbit;
 
 	// Draw the next frame
 	glutPostRedisplay();

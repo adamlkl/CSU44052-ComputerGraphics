@@ -80,13 +80,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="animated_model.cpp" />
+    <ClCompile Include="joint.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="maths_funcs.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="quaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="animated_model.h" />
+    <ClInclude Include="animation.h" />
+    <ClInclude Include="animator.h" />
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="joint.h" />
+    <ClInclude Include="joint_transform.h" />
+    <ClInclude Include="key_frame.h" />
     <ClInclude Include="maths_funcs.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="model_texture.h" />
+    <ClInclude Include="quaternion.h" />
+    <ClInclude Include="raw_model.h" />
+    <ClInclude Include="texture.h" />
+    <ClInclude Include="TexturedModel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

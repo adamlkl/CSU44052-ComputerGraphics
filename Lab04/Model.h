@@ -1,3 +1,6 @@
+#ifndef MODEL_HEADER
+#define MODEL_HEADER
+
 #include <array>
 #include <math.h>
 #include <vector> // STL dynamic memory.
@@ -41,3 +44,4 @@ GLuint CompileShaders(const char* vertexShaderTextFileName, const char* fragment
 void generateObjectBufferMesh(Model *model);
 
 // TODO: handle rigging and texturing #pragma once
+#endif

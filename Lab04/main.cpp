@@ -28,6 +28,7 @@ MESH TO LOAD
 #define ABSOL_MESH_NAME "3d_Models/AbsolMega_ColladaMax.dae"
 #define WELL_MESH_NAME "3d_Models/well/well3.dae"
 #define HILLY_MAP_MESH_NAME "3d_Models/hilly/hilly.dae"
+#define MODEL_MESH_NAME "3d_Models/model/model.dae"
 
 /*----------------------------------------------------------------------------
 INITIALIZE VARIABLES 
@@ -86,7 +87,6 @@ MODEL, VIEW, PROJECTION CALCULATION
 ----------------------------------------------------------------------------*/
 mat4 setupCamera(Model pivot) {
 	mat4 pivotTransformation = applyTransformation(pivot);
-
 	mat4 view = identity_mat4();
 	view = rotate(view, cameraOrbitRotation);
 	view = translate(view, vec3(cameraPosition[0], cameraPosition[1], cameraPosition[2]));
@@ -110,7 +110,6 @@ mat4 render(Model model, mat4 view, mat4 projection) {
 	GLuint shaderProgramID = model.shaderProgramID;
 	glUseProgram(shaderProgramID);
 	glBindVertexArray(model.mesh_vao);
-
 	//Declare your uniform variables that will be used in your shader
 	int matrix_location = glGetUniformLocation(shaderProgramID, "model");
 	int view_mat_location = glGetUniformLocation(shaderProgramID, "view");
@@ -160,14 +159,13 @@ void updateScene() {
 	last_time = curr_time;
 
 	duration = (timeGetTime() - startTime) / 1000.0f;
-
 	glutPostRedisplay();
 }
 
 void init() {
 	GLuint shaderProgramID = CompileShaders("simpleVertexShader.txt", "simpleFragmentShader.txt");
 	
-	absol.mesh = load_mesh(ABSOL_MESH_NAME);
+	absol.mesh = load_mesh(MODEL_MESH_NAME);
 	absol.shaderProgramID = shaderProgramID;
 	generateObjectBufferMesh(&absol);
 
@@ -182,7 +180,7 @@ void init() {
 	startTime = timeGetTime();
 
 	absol.position[2] -= 20; absol.position[1] -= 2;
-	absol.scaling[0] *= 0.03, absol.scaling[1] *= 0.03, absol.scaling[2] *= 0.03;
+	absol.scaling[0] *= 1, absol.scaling[1] *= 1, absol.scaling[2] *= 1;
 
 	terrain.scaling[0] *= 2, terrain.scaling[1] *= 1.5, terrain.scaling[2] *= 2;
 	terrain.position[1] -= 10;

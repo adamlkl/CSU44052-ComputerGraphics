@@ -1,3 +1,4 @@
+#define STB_IMAGE_IMPLEMENTATION
 // Assimp includes
 #include <assimp/cimport.h> // scene importer
 #include <assimp/scene.h> // collects data
@@ -9,6 +10,7 @@
 #include <vector> 
 
 #include "model.h"
+#include "stb_image.h"
 
 #pragma region MESH LOADING
 /*----------------------------------------------------------------------------
@@ -69,6 +71,40 @@ ModelData load_mesh(const char* file_name) {
 	return modelData;
 }
 #pragma endregion MESH LOADING
+
+void loadTextures(Model * model, const char * file_name, int active_arg, const GLchar * textString, int textNumber)
+{
+	ModelData mesh_data = model->mesh;
+	GLuint shaderProgramID = model->shaderProgramID;
+
+	int x, y, n;
+	int force_channels = 4;
+	unsigned char *image_data = stbi_load(file_name, &x, &y, &n, force_channels);
+	if (!image_data) {
+		fprintf(stderr, "ERROR: could not load %s\n", file_name);
+
+	}
+	// NPOT check
+	if ((x & (x - 1)) != 0 || (y & (y - 1)) != 0) {
+		fprintf(stderr, "WARNING: texture %s is not power-of-2 dimensions\n",
+			file_name);
+	}
+
+	glActiveTexture(active_arg);
+	glBindTexture(GL_TEXTURE_2D, model->textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		image_data);
+	glUniform1i(glGetUniformLocation(shaderProgramID, textString), textNumber);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_REPEAT);
+	GLfloat max_aniso = 0.0f;
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_aniso);
+	// set the maximum!
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_aniso);
+}
 
 // Shader Functions
 #pragma region SHADER_FUNCTIONS

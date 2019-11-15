@@ -1,3 +1,4 @@
+/*
 #ifndef CAMERA_H
 #define CAMERA_H
 
@@ -128,4 +129,28 @@ private:
 		Up = normalise(cross(Right, Front));
 	}
 };
+#endif
+*/
+#ifndef CAMERA_HEADER
+#define CAMERA_HEADER
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+#include <vector>
+
+#include "maths_funcs.h"
+#include "model.h"
+
+struct Camera {
+	vec3 Position = vec3(0.0f, 0.0f, 0.0f);
+	GLfloat YAW = 0.0f;
+	GLfloat PITCH = 20.0f;
+	GLfloat roll;
+
+	GLfloat distanceFromPlayer = 50.0f;
+	GLfloat angleFromPlayer = 0.0f;
+	Model model;
+};
+
+void calculateZoom(Camera & camera, GLuint yoffset);
+void calculatePitch();
 #endif

@@ -15,6 +15,7 @@
 #include <assimp/postprocess.h> // various extra operations
 
 #include "maths_funcs.h"
+#include "model_texture.h"
 
 struct ModelData {
 	const aiScene* scene;
@@ -35,9 +36,12 @@ struct Model {
 	GLfloat scaling[3] = { 1.0f , 1.0f, 1.0f };
 
 	// TODO: for rigging
+	GLuint textureID;
+	ModelTexture texture;
 };
 
 ModelData load_mesh(const char* file_name);
+void loadTextures(Model * model, const char * file_name, int active_arg, const GLchar * textString, int textNumber);
 char* readShaderSource(const char* shaderFile);
 static void AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType);
 GLuint CompileShaders(const char* vertexShaderTextFileName, const char* fragmentShaderTextFileName);

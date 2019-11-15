@@ -81,6 +81,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="animated_model.cpp" />
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="joint.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="maths_funcs.cpp" />
@@ -100,6 +101,7 @@
     <ClInclude Include="model_texture.h" />
     <ClInclude Include="quaternion.h" />
     <ClInclude Include="raw_model.h" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="TexturedModel.h" />
   </ItemGroup>

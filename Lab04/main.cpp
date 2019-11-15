@@ -17,8 +17,12 @@
 #include <assimp/postprocess.h> // various extra operations
 
 // Project includes
+#include "camera.h"
 #include "maths_funcs.h"
 #include "model.h"
+#include "stb_image.h"
+
+#define PI 3.14159265
 
 /*----------------------------------------------------------------------------
 MESH TO LOAD
@@ -30,15 +34,25 @@ MESH TO LOAD
 #define HILLY_MAP_MESH_NAME "3d_Models/hilly/hilly.dae"
 #define MODEL_MESH_NAME "3d_Models/model/model.dae"
 
+
+/*----------------------------------------------------------------------------
+TEXTURE TO LOAD
+----------------------------------------------------------------------------*/
+#define MODEL_TEXTURE_NAME "3d_Models/model/diffuse.png"
+
 /*----------------------------------------------------------------------------
 INITIALIZE VARIABLES 
 ----------------------------------------------------------------------------*/
 int width = 800;
 int height = 600;
+const GLfloat RUN_SPEED = 20.0f;
+const GLfloat TURN_SPEED = 80.0f;
 
 Model absol;
 Model well;
 Model terrain; 
+
+Camera camera; 
 
 float deltaTime; 
 DWORD startTime;
@@ -52,6 +66,9 @@ int mouse_dx = -100, mouse_dy = -100;
 GLfloat modelTranslationSpeed[] = { 10.0f, 10.0f, 10.0f };
 GLfloat modelRotationSpeed[] = { 10.0f, 10.0f, 10.0f };
 GLfloat modelScalingSpeed[] = { 10.0f, 10.0f, 10.0f };
+
+GLfloat currentSpeed = 0.0f;
+GLfloat currentTurnSpeed = 0.0f;
 
 // setup variables for camera
 GLfloat cameraPosition[] = { 0.0f, 0.0f, -10.0f }, cameraRotation[] = { 0.0f, 0.0f, 0.0f }, cameraOrbitRotation[] = { 0.0f, 0.0f, 0.0f };
@@ -110,6 +127,7 @@ mat4 render(Model model, mat4 view, mat4 projection) {
 	GLuint shaderProgramID = model.shaderProgramID;
 	glUseProgram(shaderProgramID);
 	glBindVertexArray(model.mesh_vao);
+	glBindTexture(GL_TEXTURE_2D, model.textureID);
 	//Declare your uniform variables that will be used in your shader
 	int matrix_location = glGetUniformLocation(shaderProgramID, "model");
 	int view_mat_location = glGetUniformLocation(shaderProgramID, "view");
@@ -167,7 +185,14 @@ void init() {
 	
 	absol.mesh = load_mesh(MODEL_MESH_NAME);
 	absol.shaderProgramID = shaderProgramID;
+	//glGenTextures(1, &absol.textureID);
 	generateObjectBufferMesh(&absol);
+	// loadTextures(&absol, MODEL_TEXTURE_NAME, GL_TEXTURE0, "modelTexture", 0);
+
+	startTime = timeGetTime();
+
+	absol.position[2] -= 20; absol.position[1] -= 2;
+	absol.scaling[0] *= 1, absol.scaling[1] *= 1, absol.scaling[2] *= 1;
 
 	well.mesh = load_mesh(WELL_MESH_NAME);
 	well.shaderProgramID = shaderProgramID;
@@ -176,11 +201,6 @@ void init() {
 	terrain.mesh = load_mesh(HILLY_MAP_MESH_NAME);
 	terrain.shaderProgramID = shaderProgramID;
 	generateObjectBufferMesh(&terrain);
-
-	startTime = timeGetTime();
-
-	absol.position[2] -= 20; absol.position[1] -= 2;
-	absol.scaling[0] *= 1, absol.scaling[1] *= 1, absol.scaling[2] *= 1;
 
 	terrain.scaling[0] *= 2, terrain.scaling[1] *= 1.5, terrain.scaling[2] *= 2;
 	terrain.position[1] -= 10;
@@ -199,22 +219,41 @@ USER INTERACTION FUNCTIONS
 #pragma region USER_INPUT_FUNCTIONS
 void keypress(unsigned char key, int x, int y) {
 	if (key == 'a') {
-		absol.position[0] += modelTranslationSpeed[0] * deltaTime;
-		absol.rotation[1] = 90;
+		// absol.position[0] += modelTranslationSpeed[0] * deltaTime;
+		// absol.rotation[1] = 90;
+		currentTurnSpeed = TURN_SPEED;
+		
 	}
-	if (key == 'd') {
-		absol.position[0] -= modelTranslationSpeed[0] * deltaTime;
-		absol.rotation[1] = -90;
+	else if (key == 'd') {
+		// absol.position[0] -= modelTranslationSpeed[0] * deltaTime;
+		// absol.rotation[1] = -90;
+		currentTurnSpeed = -TURN_SPEED;
 	}
+	else {
+		currentTurnSpeed = 0.0f;
+	}
+
 	if (key == 'w') {
-		absol.position[2] += modelTranslationSpeed[2] * deltaTime;
-		absol.rotation[1] = 0;
+		// absol.position[2] += modelTranslationSpeed[2] * deltaTime;
+		// absol.rotation[1] = 0;
+		currentSpeed = RUN_SPEED;
 	}
-	if (key == 's') {
-		absol.position[2] -= modelTranslationSpeed[2] * deltaTime;
-		absol.rotation[1] = 180;
+	else if (key == 's') {
+		// absol.position[2] -= modelTranslationSpeed[2] * deltaTime;
+		// absol.rotation[1] = 180;
+		currentSpeed = - RUN_SPEED;
+	}
+	else {
+		currentSpeed = 0.0f;
 	}
 	if (key == 'x') orbit = !orbit;
+
+	absol.rotation[1] += currentTurnSpeed * deltaTime;
+	GLfloat distance = currentSpeed * deltaTime;
+	GLfloat dx = (GLfloat)(distance * sinf(absol.rotation[1] * PI/ 180.0f));
+	GLfloat dz = (GLfloat)(distance * cosf(absol.rotation[1] * PI / 180.0f));
+	absol.position[0] += dx;
+	absol.position[2] += dz;
 
 	// Draw the next frame
 	glutPostRedisplay();
@@ -274,8 +313,18 @@ void mouseButton(int button, int state, int x, int y) {
 			mouse_y = -100;
 		}
 	}
+
+	else if (button == GLUT_RIGHT_BUTTON) {
+		if (state == GLUT_DOWN) {
+			
+		}
+	}
 }
-//mouseScroll
+void mouseScroll(int button, int dir, int x, int y) {
+	calculateZoom(camera, dir);
+	printf("dir: %d, x: %d, y: %d\n", dir, x, y);
+}
+
 #pragma endregion KEYBOARD_INPUT_FUNCTIONS
 
 int main(int argc, char** argv) {
@@ -292,6 +341,7 @@ int main(int argc, char** argv) {
 	glutSpecialFunc(specialKeyboard);
 	glutMotionFunc(mouseMotion);
 	glutMouseFunc(mouseButton);
+	glutMouseWheelFunc(mouseScroll);
 
 	// A call to glewInit() must be done after glut is initialized!
 	GLenum res = glewInit();

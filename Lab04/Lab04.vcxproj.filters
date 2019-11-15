@@ -25,6 +25,9 @@
     <Filter Include="Header Files\AnimatedModel">
       <UniqueIdentifier>{5ef7dbc0-6f93-4cc6-8031-b9714cc087eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\helper">
+      <UniqueIdentifier>{4d4feb22-81ab-4116-ac78-20ba3516d030}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -45,11 +48,11 @@
     <ClCompile Include="quaternion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="maths_funcs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -88,6 +91,12 @@
     </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="maths_funcs.h">
+      <Filter>Header Files\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Header Files\helper</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

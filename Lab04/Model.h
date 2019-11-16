@@ -41,7 +41,7 @@ struct Model {
 };
 
 ModelData load_mesh(const char* file_name);
-void loadTextures(Model * model, const char * file_name, int active_arg, const GLchar * textString, int textNumber);
+// void loadTextures(Model * model, const char * file_name, int active_arg, const GLchar * textString, int textNumber);
 char* readShaderSource(const char* shaderFile);
 static void AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType);
 GLuint CompileShaders(const char* vertexShaderTextFileName, const char* fragmentShaderTextFileName);

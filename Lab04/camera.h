@@ -133,17 +133,21 @@ private:
 */
 #ifndef CAMERA_HEADER
 #define CAMERA_HEADER
+
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <vector>
+#include <math.h>
 
 #include "maths_funcs.h"
 #include "model.h"
 
+#define PI 3.14159265
+
 struct Camera {
 	vec3 Position = vec3(0.0f, 0.0f, 0.0f);
-	GLfloat YAW = 0.0f;
-	GLfloat PITCH = 20.0f;
+	GLfloat yaw = 0.0f;
+	GLfloat pitch = 20.0f;
 	GLfloat roll;
 
 	GLfloat distanceFromPlayer = 50.0f;
@@ -151,6 +155,11 @@ struct Camera {
 	Model model;
 };
 
+void move(Camera & camera, int mouse_dx, int mouse_dy);
+void calculateCameraPosition(Camera &camera, GLfloat horizontalDistance, GLfloat verticalDistance);
+GLfloat calculateHorizontalDistance(Camera &camera);
+GLfloat calculateVerticalDistance(Camera &camera);
 void calculateZoom(Camera & camera, GLuint yoffset);
-void calculatePitch();
+void calculatePitch(Camera & camera, int mouse_dy);
+void calculateAngleAroundPlayer(Camera & camera, int mouse_dx);
 #endif

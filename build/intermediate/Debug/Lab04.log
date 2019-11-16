@@ -1,7 +1,5 @@
-﻿  camera.cpp
-  main.cpp
-c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\main.cpp(179): warning C4244: '=': conversion from 'float' to 'DWORD', possible loss of data
-c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\main.cpp(253): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\main.cpp(254): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  Generating Code...
+﻿  main.cpp
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\main.cpp(151): warning C4244: '=': conversion from 'float' to 'DWORD', possible loss of data
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\main.cpp(232): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\main.cpp(233): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   Lab04.vcxproj -> C:\Users\ASUS\source\repos\ComputerGraphics\Lab 04 - Sample Object Hierarchy\\build\executables\Debug\Lab 04.exe

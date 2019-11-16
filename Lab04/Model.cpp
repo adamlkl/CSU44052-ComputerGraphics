@@ -1,4 +1,3 @@
-#define STB_IMAGE_IMPLEMENTATION
 // Assimp includes
 #include <assimp/cimport.h> // scene importer
 #include <assimp/scene.h> // collects data
@@ -10,7 +9,7 @@
 #include <vector> 
 
 #include "model.h"
-#include "stb_image.h"
+
 
 #pragma region MESH LOADING
 /*----------------------------------------------------------------------------
@@ -72,6 +71,7 @@ ModelData load_mesh(const char* file_name) {
 }
 #pragma endregion MESH LOADING
 
+/*
 void loadTextures(Model * model, const char * file_name, int active_arg, const GLchar * textString, int textNumber)
 {
 	ModelData mesh_data = model->mesh;
@@ -104,7 +104,7 @@ void loadTextures(Model * model, const char * file_name, int active_arg, const G
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_aniso);
 	// set the maximum!
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_aniso);
-}
+}*/
 
 // Shader Functions
 #pragma region SHADER_FUNCTIONS

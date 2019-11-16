@@ -87,6 +87,9 @@
     <ClCompile Include="maths_funcs.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="quaternion.cpp" />
+    <ClCompile Include="renderer.cpp" />
+    <ClCompile Include="skybox.cpp" />
+    <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animated_model.h" />
@@ -101,9 +104,12 @@
     <ClInclude Include="model_texture.h" />
     <ClInclude Include="quaternion.h" />
     <ClInclude Include="raw_model.h" />
+    <ClInclude Include="renderer.h" />
+    <ClInclude Include="skybox.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="TexturedModel.h" />
+    <ClInclude Include="utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

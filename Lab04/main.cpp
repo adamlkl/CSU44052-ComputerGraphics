@@ -20,7 +20,8 @@
 #include "camera.h"
 #include "maths_funcs.h"
 #include "model.h"
-#include "stb_image.h"
+#include "renderer.h"
+#include "utility.h"
 
 #define PI 3.14159265
 
@@ -39,6 +40,24 @@ MESH TO LOAD
 TEXTURE TO LOAD
 ----------------------------------------------------------------------------*/
 #define MODEL_TEXTURE_NAME "3d_Models/model/diffuse.png"
+#define SKYBOX_TEXTURE_NAME_RIGHT "SkyBoxImages/right.png",
+#define SKYBOX_TEXTURE_NAME_LEFT "SkyBoxImages/left.png",
+#define SKYBOX_TEXTURE_NAME_TOP "SkyBoxImages/top.png",
+#define SKYBOX_TEXTURE_NAME_BOTTOM "SkyBoxImages/bottom.png",
+#define SKYBOX_TEXTURE_NAME_FRONT "SkyBoxImages/front.png",
+#define SKYBOX_TEXTURE_NAME_BACK "SkyBoxImages/back.png"
+
+/*----------------------------------------------------------------------------
+Vertex Shader Files
+----------------------------------------------------------------------------*/
+#define SKYBOX_VERTEX_SHADER_FILE "SkyBoxVertexShader.txt"
+
+
+/*----------------------------------------------------------------------------
+Fragment Shader Files
+----------------------------------------------------------------------------*/
+#define SKYBOX_FRAGMENT_SHADER_FILE "SkyBoxFragmentShader.txt"
+
 
 /*----------------------------------------------------------------------------
 INITIALIZE VARIABLES 
@@ -52,7 +71,8 @@ Model absol;
 Model well;
 Model terrain; 
 
-Camera camera; 
+Camera camera;
+SkyBox skyBox;
 
 float deltaTime; 
 DWORD startTime;
@@ -76,30 +96,6 @@ GLfloat cameraTranslationSpeed[] = { 10.0f, 10.0f, 10.0f }, cameraRotationSpeed[
 boolean orbit = false;
 
 /*----------------------------------------------------------------------------
-TRANSFORMATION CALCULATION
-----------------------------------------------------------------------------*/
-mat4 rotate(mat4 modelMatrix, GLfloat rotation[]) {
-	mat4 tempMatrix = modelMatrix;
-	tempMatrix = rotate_x_deg(tempMatrix, rotation[0]);
-	tempMatrix = rotate_y_deg(tempMatrix, rotation[1]);
-	tempMatrix = rotate_z_deg(tempMatrix, rotation[2]);
-	return tempMatrix;
-}
-
-mat4 applyTransformation(Model model) {
-	mat4 transformation = identity_mat4();
-	transformation = scale(transformation, vec3(model.scaling[0], model.scaling[1], model.scaling[2]));
-	transformation = rotate(transformation, model.rotation);
-	transformation = translate(transformation, vec3(model.position[0], model.position[1], model.position[2]));
-	return transformation;
-}
-
-void copy_array(GLfloat matA[3], GLfloat matB[3]) {
-	for (int i = 0; i < 3; i++)
-		matA[i] = matB[i];
-}
-
-/*----------------------------------------------------------------------------
 MODEL, VIEW, PROJECTION CALCULATION
 ----------------------------------------------------------------------------*/
 mat4 setupCamera(Model pivot) {
@@ -120,32 +116,6 @@ mat4 setupProjection() {
 }
 
 /*----------------------------------------------------------------------------
-RENDERING
-----------------------------------------------------------------------------*/
-mat4 render(Model model, mat4 view, mat4 projection) {
-	ModelData mesh_data = model.mesh;
-	GLuint shaderProgramID = model.shaderProgramID;
-	glUseProgram(shaderProgramID);
-	glBindVertexArray(model.mesh_vao);
-	glBindTexture(GL_TEXTURE_2D, model.textureID);
-	//Declare your uniform variables that will be used in your shader
-	int matrix_location = glGetUniformLocation(shaderProgramID, "model");
-	int view_mat_location = glGetUniformLocation(shaderProgramID, "view");
-	int proj_mat_location = glGetUniformLocation(shaderProgramID, "proj");
-
-	mat4 transformation = identity_mat4();
-	transformation = scale(transformation, vec3(model.scaling[0], model.scaling[1], model.scaling[2]));
-	transformation = rotate(transformation, model.rotation);
-	transformation = translate(transformation, vec3(model.position[0], model.position[1], model.position[2]));
-
-	// update uniforms & draw
-	glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, projection.m);
-	glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
-	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, transformation.m);
-	glDrawArrays(GL_TRIANGLES, 0, mesh_data.mPointCount);
-	return transformation;
-}
-/*----------------------------------------------------------------------------
 GAME OPERATION 
 ----------------------------------------------------------------------------*/
 void display() {
@@ -160,6 +130,8 @@ void display() {
 	mat4 view = setupCamera(absol);
 	mat4 projection = setupProjection();
     
+	renderSkyBox(skyBox, view, projection);
+
 	mat4 model = render(absol, view, projection);
 	mat4 wellModel = render(well, view, projection);
 	mat4 terrainModel = render(terrain, view, projection);
@@ -191,7 +163,7 @@ void init() {
 
 	startTime = timeGetTime();
 
-	absol.position[2] -= 20; absol.position[1] -= 2;
+	absol.position[2] -= 20; absol.position[1] = -20;
 	absol.scaling[0] *= 1, absol.scaling[1] *= 1, absol.scaling[2] *= 1;
 
 	well.mesh = load_mesh(WELL_MESH_NAME);
@@ -203,10 +175,17 @@ void init() {
 	generateObjectBufferMesh(&terrain);
 
 	terrain.scaling[0] *= 2, terrain.scaling[1] *= 1.5, terrain.scaling[2] *= 2;
-	terrain.position[1] -= 10;
+	terrain.position[1] -= 20.0f;
 
 	well.scaling[0] *= 0.5, well.scaling[1] *= 0.5, well.scaling[2] *= 0.5;
-	well.position[0] -= 10, well.position[1] -= 9, well.position[2] = 10;
+	well.position[0] -= 10, well.position[1] -= 19, well.position[2] = 10;
+
+	skyBox.textureID = loadCubeMap();
+	GLuint skyShaderId = CompileShaders(SKYBOX_VERTEX_SHADER_FILE, SKYBOX_FRAGMENT_SHADER_FILE);
+	skyBox.shaderProgramID = skyShaderId;
+	generateSkyBoxBufferMesh(&skyBox);
+
+	camera.model = absol; 
 
 	cameraPosition[1] -= 5.0f;
 	cameraPosition[2] += 20.0f;
@@ -295,9 +274,10 @@ void mouseMotion(int x, int y) {
 	if (orbit) last_camera_rotation = cameraOrbitRotation;
 	else last_camera_rotation = cameraRotation;
 
+    printf("dx: %d, res: %f", mouse_dx, mouse_dx * cameraRotationSpeed[1] * deltaTime);
 	last_camera_rotation[1] -= mouse_dx * cameraRotationSpeed[1] * deltaTime;
 	// last_camera_rotation[0] -= mouse_dy * cameraRotationSpeed[0] * deltaTime;
-
+	
 	// Draw the next frame
 	glutPostRedisplay();
 }
@@ -313,16 +293,11 @@ void mouseButton(int button, int state, int x, int y) {
 			mouse_y = -100;
 		}
 	}
-
-	else if (button == GLUT_RIGHT_BUTTON) {
-		if (state == GLUT_DOWN) {
-			
-		}
-	}
 }
-void mouseScroll(int button, int dir, int x, int y) {
-	calculateZoom(camera, dir);
-	printf("dir: %d, x: %d, y: %d\n", dir, x, y);
+
+void passiveMouseMotion(int x, int y) {
+	mouse_x = x;
+	mouse_y = y;
 }
 
 #pragma endregion KEYBOARD_INPUT_FUNCTIONS
@@ -341,7 +316,7 @@ int main(int argc, char** argv) {
 	glutSpecialFunc(specialKeyboard);
 	glutMotionFunc(mouseMotion);
 	glutMouseFunc(mouseButton);
-	glutMouseWheelFunc(mouseScroll);
+	glutPassiveMotionFunc(passiveMouseMotion);
 
 	// A call to glewInit() must be done after glut is initialized!
 	GLenum res = glewInit();

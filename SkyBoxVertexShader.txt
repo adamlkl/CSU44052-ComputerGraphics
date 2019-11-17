@@ -1,13 +1,13 @@
 #version 330
-in vec3 vertex_position;
+in vec3 position;
 
-out vec3 TexCoords;
+out vec3 textureCoords;
 
-uniform mat4 proj;
-uniform mat4 view;
+uniform mat4 projection_matrix;
+uniform mat4 view_matrix;
 
 void main()
 {
-    TexCoords = vertex_position;
-    gl_Position = proj * view * vec4(vertex_position, 1.0);
+    gl_Position = projection_matrix * view_matrix * vec4(position, 1.0);
+    textureCoords = position;
 }  

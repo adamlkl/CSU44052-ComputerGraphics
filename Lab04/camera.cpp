@@ -1,25 +1,26 @@
 #include "camera.h"
 
-void move(Camera & camera, int mouse_dx, int mouse_dy)
+void move(Camera & camera, Model &model, int mouse_dx, int mouse_dy)
 {
 	calculatePitch(camera, mouse_dy);
 	calculateAngleAroundPlayer(camera, mouse_dx);
 	GLfloat horizontalDistance = calculateHorizontalDistance(camera);
 	GLfloat verticalDistance = calculateVerticalDistance(camera);
-	calculateCameraPosition(camera, horizontalDistance, verticalDistance);
+	calculateCameraPosition(camera, model, horizontalDistance, verticalDistance);
 }
 
-void calculateCameraPosition(Camera &camera, GLfloat horizontalDistance, GLfloat verticalDistance)
+void calculateCameraPosition(Camera &camera, Model &model, GLfloat horizontalDistance, GLfloat verticalDistance)
 {
-	GLfloat theta = camera.model.rotation[1] + camera.angleFromPlayer;
+	GLfloat theta = model.rotation[1] + camera.angleFromPlayer;
 	GLfloat offsetX = (GLfloat)(horizontalDistance * sinf(theta * PI / 180.0f));
 	GLfloat offsetZ = (GLfloat)(horizontalDistance * cosf(theta * PI / 180.0f));
 
-	camera.Position.v[0] = camera.model.position[0] - offsetX;
-	camera.Position.v[1] = camera.model.position[1] + verticalDistance;
-	camera.Position.v[2] = camera.model.position[2] - offsetZ;
+	printf("pos_x = %f, pos_z = %f ", model.position[0], model.position[1]);
+	camera.position.v[0] = model.position[0] - offsetX;
+	camera.position.v[1] = model.position[1] + verticalDistance;
+	camera.position.v[2] = model.position[2] - offsetZ;
 
-	camera.yaw = 180 - (camera.model.rotation[1] + camera.angleFromPlayer);
+	camera.yaw = 180 - (model.rotation[1] + camera.angleFromPlayer);
 }
 
 GLfloat calculateHorizontalDistance(Camera & camera)
@@ -34,7 +35,6 @@ GLfloat calculateVerticalDistance(Camera & camera)
 
 void calculateZoom(Camera & camera, GLuint yoffset)
 {
-	printf("zoom: %d\n", yoffset);
 	GLfloat zoomLevel = yoffset * 0.1f;
 	camera.distanceFromPlayer -= zoomLevel;
 }

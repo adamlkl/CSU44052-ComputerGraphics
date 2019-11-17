@@ -38,9 +38,9 @@ void renderSkyBox(SkyBox skyBox, mat4 view, mat4 projection)
 	glBindVertexArray(skyBox.vao);
 	//printf("Vao %d Shader_ID %d Texture_ID %d \n", sky.vao,sky.shaderProgramID, sky.textureID);
 	glActiveTexture(GL_TEXTURE0);
-	int view_mat_location = glGetUniformLocation(shaderProgramID, "view");
-	int proj_mat_location = glGetUniformLocation(shaderProgramID, "proj");
-	int texture_location = glGetUniformLocation(shaderProgramID, "skybox");
+	int view_mat_location = glGetUniformLocation(shaderProgramID, "view_matrix");
+	int proj_mat_location = glGetUniformLocation(shaderProgramID, "projection_matrix");
+	int texture_location = glGetUniformLocation(shaderProgramID, "skyBox");
 	mat4 view_untranslated = mat4(
 		view.m[0], view.m[4], view.m[8], 0.0f,
 		view.m[1], view.m[5], view.m[9], 0.0f,

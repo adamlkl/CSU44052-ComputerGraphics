@@ -145,18 +145,17 @@ private:
 #define PI 3.14159265
 
 struct Camera {
-	vec3 Position = vec3(0.0f, 0.0f, 0.0f);
+	vec3 position = vec3(0.0f, 0.0f, 0.0f);
 	GLfloat yaw = 0.0f;
-	GLfloat pitch = 20.0f;
+	GLfloat pitch = 0.0f;
 	GLfloat roll;
 
-	GLfloat distanceFromPlayer = 50.0f;
+	GLfloat distanceFromPlayer = 20.0f;
 	GLfloat angleFromPlayer = 0.0f;
-	Model model;
 };
 
-void move(Camera & camera, int mouse_dx, int mouse_dy);
-void calculateCameraPosition(Camera &camera, GLfloat horizontalDistance, GLfloat verticalDistance);
+void move(Camera & camera, Model &model, int mouse_dx, int mouse_dy);
+void calculateCameraPosition(Camera &camera, Model &model, GLfloat horizontalDistance, GLfloat verticalDistance);
 GLfloat calculateHorizontalDistance(Camera &camera);
 GLfloat calculateVerticalDistance(Camera &camera);
 void calculateZoom(Camera & camera, GLuint yoffset);

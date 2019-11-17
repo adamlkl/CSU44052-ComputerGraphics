@@ -60,21 +60,21 @@ Fragment Shader Files
 
 
 /*----------------------------------------------------------------------------
-INITIALIZE VARIABLES 
+INITIALIZE VARIABLES
 ----------------------------------------------------------------------------*/
 int width = 800;
 int height = 600;
-const GLfloat RUN_SPEED = 20.0f;
+const GLfloat RUN_SPEED = 50.0f;
 const GLfloat TURN_SPEED = 80.0f;
 
 Model absol;
 Model well;
-Model terrain; 
+Model terrain;
 
 Camera camera;
 SkyBox skyBox;
 
-float deltaTime; 
+float deltaTime;
 DWORD startTime;
 DWORD duration = 0;
 
@@ -116,7 +116,7 @@ mat4 setupProjection() {
 }
 
 /*----------------------------------------------------------------------------
-GAME OPERATION 
+GAME OPERATION
 ----------------------------------------------------------------------------*/
 void display() {
 
@@ -129,7 +129,7 @@ void display() {
 	// mvp setup and rendering
 	mat4 view = setupCamera(absol);
 	mat4 projection = setupProjection();
-    
+
 	renderSkyBox(skyBox, view, projection);
 
 	mat4 model = render(absol, view, projection);
@@ -154,7 +154,7 @@ void updateScene() {
 
 void init() {
 	GLuint shaderProgramID = CompileShaders("simpleVertexShader.txt", "simpleFragmentShader.txt");
-	
+
 	absol.mesh = load_mesh(MODEL_MESH_NAME);
 	absol.shaderProgramID = shaderProgramID;
 	//glGenTextures(1, &absol.textureID);
@@ -174,8 +174,8 @@ void init() {
 	terrain.shaderProgramID = shaderProgramID;
 	generateObjectBufferMesh(&terrain);
 
-	terrain.scaling[0] *= 2, terrain.scaling[1] *= 1.5, terrain.scaling[2] *= 2;
-	terrain.position[1] -= 20.0f;
+	terrain.scaling[0] *= 20, terrain.scaling[1] *= 1, terrain.scaling[2] *= 20;
+	terrain.position[1] -= 40.0f;
 
 	well.scaling[0] *= 0.5, well.scaling[1] *= 0.5, well.scaling[2] *= 0.5;
 	well.position[0] -= 10, well.position[1] -= 19, well.position[2] = 10;
@@ -185,12 +185,10 @@ void init() {
 	skyBox.shaderProgramID = skyShaderId;
 	generateSkyBoxBufferMesh(&skyBox);
 
-	camera.model = absol; 
-
 	cameraPosition[1] -= 5.0f;
 	cameraPosition[2] += 20.0f;
 	cameraRotation[1] += 180.f;
-} 
+}
 
 /*----------------------------------------------------------------------------
 USER INTERACTION FUNCTIONS
@@ -201,7 +199,7 @@ void keypress(unsigned char key, int x, int y) {
 		// absol.position[0] += modelTranslationSpeed[0] * deltaTime;
 		// absol.rotation[1] = 90;
 		currentTurnSpeed = TURN_SPEED;
-		
+
 	}
 	else if (key == 'd') {
 		// absol.position[0] -= modelTranslationSpeed[0] * deltaTime;
@@ -220,7 +218,7 @@ void keypress(unsigned char key, int x, int y) {
 	else if (key == 's') {
 		// absol.position[2] -= modelTranslationSpeed[2] * deltaTime;
 		// absol.rotation[1] = 180;
-		currentSpeed = - RUN_SPEED;
+		currentSpeed = -RUN_SPEED;
 	}
 	else {
 		currentSpeed = 0.0f;
@@ -229,7 +227,7 @@ void keypress(unsigned char key, int x, int y) {
 
 	absol.rotation[1] += currentTurnSpeed * deltaTime;
 	GLfloat distance = currentSpeed * deltaTime;
-	GLfloat dx = (GLfloat)(distance * sinf(absol.rotation[1] * PI/ 180.0f));
+	GLfloat dx = (GLfloat)(distance * sinf(absol.rotation[1] * PI / 180.0f));
 	GLfloat dz = (GLfloat)(distance * cosf(absol.rotation[1] * PI / 180.0f));
 	absol.position[0] += dx;
 	absol.position[2] += dz;
@@ -264,7 +262,7 @@ void specialKeyboard(int key, int x, int y) {
 
 void mouseMotion(int x, int y) {
 	if (mouse_x != -100) mouse_dx = mouse_x - x;
-    if (mouse_y != -100) mouse_dy = mouse_y - y;
+	if (mouse_y != -100) mouse_dy = mouse_y - y;
 
 	mouse_x = x;
 	mouse_y = y;
@@ -274,10 +272,10 @@ void mouseMotion(int x, int y) {
 	if (orbit) last_camera_rotation = cameraOrbitRotation;
 	else last_camera_rotation = cameraRotation;
 
-    printf("dx: %d, res: %f", mouse_dx, mouse_dx * cameraRotationSpeed[1] * deltaTime);
+	printf("dx: %d, res: %f", mouse_dx, mouse_dx * cameraRotationSpeed[1] * deltaTime);
 	last_camera_rotation[1] -= mouse_dx * cameraRotationSpeed[1] * deltaTime;
 	// last_camera_rotation[0] -= mouse_dy * cameraRotationSpeed[0] * deltaTime;
-	
+
 	// Draw the next frame
 	glutPostRedisplay();
 }
@@ -331,4 +329,3 @@ int main(int argc, char** argv) {
 	glutMainLoop();
 	return 0;
 }
-

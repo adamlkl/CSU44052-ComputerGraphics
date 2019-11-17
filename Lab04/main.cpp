@@ -18,6 +18,7 @@
 
 // Project includes
 #include "camera.h"
+#include "light.h"
 #include "maths_funcs.h"
 #include "model.h"
 #include "renderer.h"
@@ -71,6 +72,7 @@ Model absol;
 Model well;
 Model terrain;
 
+Light light;
 Camera camera;
 SkyBox skyBox;
 
@@ -112,6 +114,7 @@ mat4 setupCamera(Model pivot) {
 //Setup perspective projection
 mat4 setupProjection() {
 	mat4 persp_proj = perspective(75.0f, (float)width / (float)height, 0.1f, 1000.0f);
+	glUniform3f
 	return persp_proj;
 }
 
@@ -153,6 +156,9 @@ void updateScene() {
 }
 
 void init() {
+	light.position = vec3(0.0f, 0.0f, -20.0f);
+	light.color = vec3(1.0f, 1.0f, 1.0f);
+
 	GLuint shaderProgramID = CompileShaders("simpleVertexShader.txt", "simpleFragmentShader.txt");
 
 	absol.mesh = load_mesh(MODEL_MESH_NAME);

@@ -14,7 +14,7 @@ struct Terrain{
 	GLfloat x;
 	GLfloat z;
 
-	unsigned int textureID;
+	GLuint textureID;
 	GLuint shaderProgramID;
 	GLuint vao;
 	size_t mPointCount = 0;
@@ -24,6 +24,7 @@ struct Terrain{
 	std::vector<vec2> mTextureCoords;
 };
 
+void terrainSetup(int gridX, int gridZ, int textureID, GLuint shaderProgramID);
 void generateTerrain(int gridX, int gridZ);
 
 #endif

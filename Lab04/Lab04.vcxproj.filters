@@ -28,24 +28,21 @@
     <Filter Include="Header Files\helper">
       <UniqueIdentifier>{4d4feb22-81ab-4116-ac78-20ba3516d030}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Animation">
+      <UniqueIdentifier>{feb959b8-cc67-4140-957a-2e0286ffa7a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AnimatedModel">
+      <UniqueIdentifier>{b2d196f4-25f3-4636-b47f-866d55736a57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Model">
+      <UniqueIdentifier>{b1bbf9c4-faf2-478b-9c3f-4542f6d3adc9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="maths_funcs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="joint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="animated_model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="quaternion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
@@ -57,11 +54,23 @@
     <ClCompile Include="utility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="joint.cpp">
+      <Filter>Source Files\AnimatedModel</Filter>
+    </ClCompile>
+    <ClCompile Include="animated_model.cpp">
+      <Filter>Source Files\AnimatedModel</Filter>
+    </ClCompile>
+    <ClCompile Include="quaternion.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
     <ClCompile Include="skybox.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
     <ClCompile Include="terrain.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +129,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="terrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -100,6 +100,7 @@
     <ClInclude Include="joint.h" />
     <ClInclude Include="joint_transform.h" />
     <ClInclude Include="key_frame.h" />
+    <ClInclude Include="light.h" />
     <ClInclude Include="maths_funcs.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="model_texture.h" />

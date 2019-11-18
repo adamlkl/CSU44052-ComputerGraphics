@@ -5,14 +5,16 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
+#include "model.h"
+
 #include <assimp/cimport.h> // scene importer
 #include <assimp/scene.h> // collects data
 #include <assimp/postprocess.h> // various extra operations
 #include <array>
 #include <iostream>
 #include <vector>
-#include "maths_funcs.h"
 
+#include "maths_funcs.h"
 
 struct SkyBox {
 	unsigned int textureID;
@@ -23,6 +25,6 @@ struct SkyBox {
 
 
 // unsigned int loadCubeMap(std::vector<std::string> cubeFaces);
-unsigned int loadCubeMap();
+unsigned int loadingCubeMap();
 void generateSkyBoxBufferMesh(SkyBox *skyBox);
 #endif

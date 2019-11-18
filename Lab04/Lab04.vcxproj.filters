@@ -113,9 +113,6 @@
     <ClInclude Include="camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="maths_funcs.h">
-      <Filter>Header Files\textures</Filter>
-    </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>Header Files\helper</Filter>
     </ClInclude>
@@ -131,7 +128,10 @@
     <ClInclude Include="terrain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="light.h">
+    <ClInclude Include="maths_funcs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

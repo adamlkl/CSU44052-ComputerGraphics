@@ -12,7 +12,7 @@ out vec3 fragment_color, position_eye, normal_eye, FragPos, world_normal;
 out vec2 textureCoordinates;
 
 // Do all this in vertex shader for gourand shading
-vec4 light_position_world = vec4 (0.0, 0.0, 2.0, 1.0); // Light position in world coords.
+vec4 light_position_world = vec4 (200.0, 200.0, 200.0, 1.0); // Light position in world coords.
 
 vec3 Ls = vec3 (100.0, 100.0, 100.0); // white specular colour
 vec3 Ld = vec3 (0.7, 0.7, 0.7); // diffuse white colour

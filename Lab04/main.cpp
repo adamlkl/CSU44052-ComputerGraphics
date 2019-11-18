@@ -18,7 +18,6 @@
 
 // Project includes
 #include "camera.h"
-#include "light.h"
 #include "maths_funcs.h"
 #include "model.h"
 #include "renderer.h"
@@ -41,12 +40,6 @@ MESH TO LOAD
 TEXTURE TO LOAD
 ----------------------------------------------------------------------------*/
 #define MODEL_TEXTURE_NAME "3d_Models/model/diffuse.png"
-#define SKYBOX_TEXTURE_NAME_RIGHT "SkyBoxImages/right.png",
-#define SKYBOX_TEXTURE_NAME_LEFT "SkyBoxImages/left.png",
-#define SKYBOX_TEXTURE_NAME_TOP "SkyBoxImages/top.png",
-#define SKYBOX_TEXTURE_NAME_BOTTOM "SkyBoxImages/bottom.png",
-#define SKYBOX_TEXTURE_NAME_FRONT "SkyBoxImages/front.png",
-#define SKYBOX_TEXTURE_NAME_BACK "SkyBoxImages/back.png"
 
 /*----------------------------------------------------------------------------
 Vertex Shader Files
@@ -72,13 +65,12 @@ Model absol;
 Model well;
 Model terrain;
 
-Light light;
 Camera camera;
 SkyBox skyBox;
 
 float deltaTime;
 DWORD startTime;
-DWORD duration = 0;
+DWORD duration;
 
 // mouse 
 int mouse_x = 0, mouse_y = 0;
@@ -114,7 +106,6 @@ mat4 setupCamera(Model pivot) {
 //Setup perspective projection
 mat4 setupProjection() {
 	mat4 persp_proj = perspective(75.0f, (float)width / (float)height, 0.1f, 1000.0f);
-	glUniform3f
 	return persp_proj;
 }
 
@@ -135,9 +126,9 @@ void display() {
 
 	renderSkyBox(skyBox, view, projection);
 
-	mat4 model = render(absol, view, projection);
-	mat4 wellModel = render(well, view, projection);
-	mat4 terrainModel = render(terrain, view, projection);
+	mat4 model = render(absol, MODEL_TEXTURE_NAME, view, projection, duration, vec3(cameraPosition[0], cameraPosition[1], cameraPosition[2]));
+	// mat4 wellModel = render(well, view, projection);
+	// mat4 terrainModel = render(terrain, view, projection);
 
 	glutSwapBuffers();
 }
@@ -151,18 +142,19 @@ void updateScene() {
 	deltaTime = (curr_time - last_time) * 0.001f;
 	last_time = curr_time;
 
-	duration = (timeGetTime() - startTime) / 1000.0f;
+	duration = (timeGetTime() - startTime) / 500.0f;
+	std::cout << "time: " << duration << std::endl;
 	glutPostRedisplay();
 }
 
 void init() {
-	light.position = vec3(0.0f, 0.0f, -20.0f);
-	light.color = vec3(1.0f, 1.0f, 1.0f);
+	// light.position = vec3(0.0f, 0.0f, -20.0f);
+	// light.color = vec3(1.0f, 1.0f, 1.0f);
 
-	GLuint shaderProgramID = CompileShaders("simpleVertexShader.txt", "simpleFragmentShader.txt");
-
-	absol.mesh = load_mesh(MODEL_MESH_NAME);
+	GLuint shaderProgramID = CompileShaders("vertexShader.txt", "fragmentShader.txt");
 	absol.shaderProgramID = shaderProgramID;
+	absol.mesh = load_mesh(MODEL_MESH_NAME);
+	
 	//glGenTextures(1, &absol.textureID);
 	generateObjectBufferMesh(&absol);
 	// loadTextures(&absol, MODEL_TEXTURE_NAME, GL_TEXTURE0, "modelTexture", 0);
@@ -172,6 +164,7 @@ void init() {
 	absol.position[2] -= 20; absol.position[1] = -20;
 	absol.scaling[0] *= 1, absol.scaling[1] *= 1, absol.scaling[2] *= 1;
 
+	/*
 	well.mesh = load_mesh(WELL_MESH_NAME);
 	well.shaderProgramID = shaderProgramID;
 	generateObjectBufferMesh(&well);
@@ -185,15 +178,17 @@ void init() {
 
 	well.scaling[0] *= 0.5, well.scaling[1] *= 0.5, well.scaling[2] *= 0.5;
 	well.position[0] -= 10, well.position[1] -= 19, well.position[2] = 10;
-
-	skyBox.textureID = loadCubeMap();
+	*/
+	skyBox.textureID = loadingCubeMap();
 	GLuint skyShaderId = CompileShaders(SKYBOX_VERTEX_SHADER_FILE, SKYBOX_FRAGMENT_SHADER_FILE);
 	skyBox.shaderProgramID = skyShaderId;
 	generateSkyBoxBufferMesh(&skyBox);
 
 	cameraPosition[1] -= 5.0f;
-	cameraPosition[2] += 20.0f;
+	cameraPosition[2] += 50.0f;
 	cameraRotation[1] += 180.f;
+
+	duration = 0;
 }
 
 /*----------------------------------------------------------------------------
@@ -278,7 +273,7 @@ void mouseMotion(int x, int y) {
 	if (orbit) last_camera_rotation = cameraOrbitRotation;
 	else last_camera_rotation = cameraRotation;
 
-	printf("dx: %d, res: %f", mouse_dx, mouse_dx * cameraRotationSpeed[1] * deltaTime);
+	// printf("dx: %d, res: %f", mouse_dx, mouse_dx * cameraRotationSpeed[1] * deltaTime);
 	last_camera_rotation[1] -= mouse_dx * cameraRotationSpeed[1] * deltaTime;
 	// last_camera_rotation[0] -= mouse_dy * cameraRotationSpeed[0] * deltaTime;
 

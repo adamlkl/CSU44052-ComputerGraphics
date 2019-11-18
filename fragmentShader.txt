@@ -26,7 +26,7 @@ uniform sampler2D texture_specular2;
 uniform sampler2D texture_specular3;
 uniform mat4 view;
 
-uniform vec3 viewPos;
+uniform vec3 viewPosition;
 in vec3 FragPos, world_normal;
 
 //number of levels
@@ -41,7 +41,7 @@ const float min_fog_dist = 3.0;
 const float max_fog_dist = 10.0;
 
 void main(){
-	vec4 texture1 = texture(texture_diffuse1, texCoord);
+	vec4 texture1 = texture(texture_diffuse1, textureCoordinates);
 
 	// Lighting calculations
     // ambient intensity
@@ -65,7 +65,7 @@ void main(){
 
 	//Black color if dot product is smaller than 0.3 Used to add thick edge lines..doesn't work too well
 	//else keep the same colors
-	vec3 V = normalize( viewPos - FragPos);
+	vec3 V = normalize( viewPosition - FragPos);
 	float edgeDetection = (dot(V, world_normal) > 0.3) ? 1 : 0;
 
     //final color

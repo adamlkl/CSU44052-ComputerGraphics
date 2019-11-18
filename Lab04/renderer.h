@@ -5,6 +5,6 @@
 #include "model.h"
 #include "skybox.h"
 
-mat4 render(Model model, mat4 view, mat4 projection);
+mat4 render(Model model, const char* file_name, mat4 view, mat4 projection, DWORD currentAnimationTime, vec3 cameraPosition);
 void renderSkyBox(SkyBox skyBox, mat4 view, mat4 projection);
 #endif

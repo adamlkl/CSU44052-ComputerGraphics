@@ -1,5 +1,14 @@
-﻿  main.cpp
-c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\main.cpp(145): warning C4244: '=': conversion from 'float' to 'DWORD', possible loss of data
-c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\main.cpp(231): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\main.cpp(232): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+﻿  model.cpp
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\model.cpp(62): warning C4804: '>': unsafe use of type 'bool' in operation
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\model.cpp(77): warning C4804: '>': unsafe use of type 'bool' in operation
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\model.cpp(243): warning C4018: '<': signed/unsigned mismatch
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\model.cpp(531): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\model.cpp(534): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  terrain.cpp
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\libs\glm-0.9.1\glm\core\func_common.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\libs\glm-0.9.1\glm\core\func_common.inl : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\libs\glm-0.9.1\glm\core\func_integer.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\terrain.cpp(24): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+c:\users\asus\source\repos\computergraphics\lab 04 - sample object hierarchy\lab04\terrain.cpp(26): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+  Generating Code...
   Lab04.vcxproj -> C:\Users\ASUS\source\repos\ComputerGraphics\Lab 04 - Sample Object Hierarchy\\build\executables\Debug\Lab 04.exe

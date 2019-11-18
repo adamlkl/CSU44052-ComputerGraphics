@@ -142,7 +142,7 @@ void updateScene() {
 	deltaTime = (curr_time - last_time) * 0.001f;
 	last_time = curr_time;
 
-	duration = (timeGetTime() - startTime) / 500.0f;
+	duration = (timeGetTime() - startTime) / 250.0f;
 	std::cout << "time: " << duration << std::endl;
 	glutPostRedisplay();
 }
